@@ -640,7 +640,26 @@ const CONFIG = {
 
 /* Точки для аналитики. В первой версии ничего никуда не отправляет.
    При переносе на хостинг сюда подключаются Метрика и пиксель. */
-function track(event, data) { /* no-op */ }
+/* Аналитика: Яндекс Метрика. Один счётчик на все школы; школа видна по адресу страницы и по параметру school. */
+const METRIKA_ID = 114376000;
+const SCHOOL_ID = "level-up";
+(function () {
+  if (!METRIKA_ID) return;
+  (function (m, e, t, r, i, k, a) { m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); }; m[i].l = 1 * new Date();
+    k = e.createElement(t), a = e.getElementsByTagName(t)[0]; k.async = 1; k.src = r; a.parentNode.insertBefore(k, a); })
+    (window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=' + METRIKA_ID, 'ym');
+  try { ym(METRIKA_ID, 'init', { clickmap: true, trackLinks: true, accurateTrackBounce: true, params: { school: SCHOOL_ID } }); } catch (e) {}
+})();
+/* Код квеста: короткий номер прохождения. Попадает в сообщение WhatsApp и в Метрику, чтобы школа могла посчитать,
+   сколько людей пришло на пробное именно из игры. */
+function questCode() {
+  try { let c = sessionStorage.getItem('lq_code'); if (!c) { c = 'LQ-' + String(Math.floor(1000 + Math.random() * 9000)); sessionStorage.setItem('lq_code', c); } return c; }
+  catch (e) { return 'LQ-' + String(Math.floor(1000 + Math.random() * 9000)); }
+}
+function track(event, data) {
+  if (!METRIKA_ID || !window.ym) return;
+  try { ym(METRIKA_ID, 'reachGoal', event, Object.assign({ school: SCHOOL_ID }, data || {})); } catch (e) {}
+}
 
 /* Режимы */
 const MODES = {
@@ -3567,8 +3586,8 @@ function closeFinal(now) {
 function waText() {
   const m = MODES[Game.mode];
   return Game.mode === 'ad'
-    ? 'Здравствуйте! Я прошёл(а) квест ' + CONFIG.title + ': «Я взрослый», ' + Game.score + ' из 10. Хочу на пробное занятие'
-    : 'Здравствуйте! Мой ребёнок прошёл квест ' + CONFIG.title + ': ' + m.label + ', ' + Game.score + ' из 10. Хочу на пробное занятие';
+    ? 'Здравствуйте! Я прошёл(а) квест ' + CONFIG.title + ': «Я взрослый», ' + Game.score + ' из 10. Хочу на пробное занятие. Код: ' + questCode()
+    : 'Здравствуйте! Мой ребёнок прошёл квест ' + CONFIG.title + ': ' + m.label + ', ' + Game.score + ' из 10. Хочу на пробное занятие. Код: ' + questCode();
 }
 function waLink() { return 'https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(waText()); }
 const priceMark = s => s.replace(/(\d[\d  ]*₸)/, '<b>$1</b>');
@@ -3849,7 +3868,7 @@ function bindUI() {
   $('btnShare').addEventListener('click', shareGame);
   $('btnAgain').addEventListener('click', () => startGame(Game.mode));
   $('btnModes').addEventListener('click', toMenu);
-  $('btnWa').addEventListener('click', () => track('whatsapp_click', { mode: Game.mode, score: Game.score }));
+  $('btnWa').addEventListener('click', () => track('whatsapp_click', { mode: Game.mode, score: Game.score, code: questCode() }));
   ['touchend', 'click', 'keydown'].forEach(ev => document.addEventListener(ev, firstTouch, true));
   // сам экран игры не прокручивается; если браузер всё же сдвинул его (клавиатура, переход к полю), возвращаем на место
   $('app').addEventListener('scroll', () => { const a = $('app'); if (a.scrollTop || a.scrollLeft) { a.scrollTop = 0; a.scrollLeft = 0; } });
