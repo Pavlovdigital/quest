@@ -334,7 +334,10 @@ const CONFIG = {
   agentName: 'Айтан',
   gameUrl: location.href.split('#')[0],
   // Бюро национальной статистики, вторичное жильё, октябрь 2026 (через nurlytau.kz)
-  market: { 'Караганда': { perM2: 411181, label: 'октябрь 2026, Бюро национальной статистики' } },
+  market: {
+    'Темиртау': { perM2: 217000, src: 'Средняя цена в объявлениях по Темиртау', label: 'медиана по 240 объявлениям на Крыше, ноябрь 2026', cap: 230000 },
+    'Караганда': { perM2: 411181, src: 'Средняя цена вторичного жилья в Караганде', label: 'октябрь 2026, Бюро национальной статистики', note: ' Цена сильно зависит от района: Юго-Восток заметно дороже остального города.' }
+  },
   baseDays: 75
 };
 
@@ -479,7 +482,8 @@ function validate(sc){
   const ok=need.every(k=> Array.isArray(S[k]) ? S[k].length : S[k]);
   const btn=sc.querySelector('.bottom .btn'); btn.disabled=!ok;
 }
-document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>{ if(b.dataset.next==='sP2') updatePrice(); show(b.dataset.next); }));
+function defaultPrice(){ const m=CONFIG.market[S.city]; if(S.priceTouched || !m || S.type==='частный дом') return; $('price').value=Math.max(3,Math.round(+$('area').value*m.perM2/5e5)/2); }
+document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>{ if(b.dataset.next==='sP2'){ defaultPrice(); updatePrice(); } show(b.dataset.next); }));
 $('btnStart').onclick=()=>{ track('seller_game_start'); show('sP1'); };
 
 function updatePrice(){
@@ -490,13 +494,13 @@ function updatePrice(){
   let h='≈ '+Math.round(perM2/1000).toLocaleString('ru-RU')+' тыс ₸ за м²';
   if (m && S.type!=='частный дом'){
     const diff=Math.round((perM2/m.perM2-1)*100);
-    h+='. Средняя цена вторички в Караганде: '+Math.round(m.perM2/1000)+' тыс ₸ за м² ('+m.label+')';
+    h+='. '+m.src+': '+Math.round(m.perM2/1000)+' тыс ₸ за м² ('+m.label+')';
     h+= diff===0 ? '.' : ', ваша цена '+(diff>0?'выше':'ниже')+' на '+Math.abs(diff)+'%.';
   } else h+='.';
   $('priceHint').textContent=h;
 }
-$('area').addEventListener('input',updatePrice);
-$('price').addEventListener('input',updatePrice);
+$('area').addEventListener('input',()=>{ defaultPrice(); updatePrice(); });
+$('price').addEventListener('input',()=>{ S.priceTouched=true; updatePrice(); });
 
 /* ===== ИГРА ===== */
 $('btnGame').onclick=()=>{
@@ -613,8 +617,10 @@ function result(){
   let mk='<h3>Ваша цена и рынок</h3>';
   if (m && S.type!=='частный дом'){
     const diff=Math.round((perM2/m.perM2-1)*100);
-    mk+='<p>Вы хотите ≈ '+Math.round(perM2/1000).toLocaleString('ru-RU')+' тыс ₸ за м². Средняя цена вторичного жилья в Караганде: '+Math.round(m.perM2/1000)+' тыс ₸ за м² ('+m.label+'). '
+    mk+='<p>Вы хотите ≈ '+Math.round(perM2/1000).toLocaleString('ru-RU')+' тыс ₸ за м². '+m.src+': '+Math.round(m.perM2/1000)+' тыс ₸ за м² ('+m.label+'). '
       + (Math.abs(diff)<3 ? 'Вы примерно на уровне средней.' : 'Ваша цена '+(diff>0?'выше':'ниже')+' средней на '+Math.abs(diff)+'%.')
+      + (m.note||'')
+      + (m.cap ? (perM2>m.cap ? ' <b>Важно:</b> банки обычно оценивают квартиры в Темиртау не выше ~'+Math.round(m.cap/1000)+' тыс ₸ за м². При вашей цене покупателю с ипотекой может не хватить одобренной суммы.' : ' Ваша цена укладывается в банковскую оценку (обычно не выше ~'+Math.round(m.cap/1000)+' тыс ₸ за м² по Темиртау), поэтому покупателю с ипотекой проще купить.') : '')
       + ' Средняя по городу ничего не говорит о вашем доме, этаже и районе: точную цену показывают реальные продажи рядом.</p>';
   } else {
     mk+='<p>Вы хотите ≈ '+Math.round(perM2/1000).toLocaleString('ru-RU')+' тыс ₸ за м². '
