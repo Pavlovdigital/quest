@@ -343,7 +343,8 @@ const CONFIG = {
 };
 
 /* ===== АНАЛИТИКА (заглушка: сюда подключаются Метрика и пиксель) ===== */
-function track(name, data){ try{ (window.dataLayer=window.dataLayer||[]).push({event:name,...(data||{})}); if(window.ym) ym(114376000,'reachGoal',name,data||{}); }catch(e){} }
+var SRC=(new URLSearchParams(location.search).get('src')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,20);
+function track(name, data){ if(SRC) data=Object.assign({src:SRC},data||{}); try{ (window.dataLayer=window.dataLayer||[]).push({event:name,...(data||{})}); if(window.ym) ym(114376000,'reachGoal',name,data||{}); }catch(e){} }
 
 /* ===== СИТУАЦИИ ===== */
 // p — изменение суммы в % от желаемой цены, d — изменение срока в днях, q — good/mid/bad
@@ -654,7 +655,7 @@ function waText(good,n){
     + 'Продаю: '+S.type+', '+S.area+' м², '+S.city+', '+S.cond+'. Хочу продать за '+fmtM(S.price)+', '+S.term+'.'
     + (docs.length?' По документам: '+docs.join(', ')+'.':'')
     + (S.goal==='buy'?' Продаю, чтобы купить другое жильё.':'')
-    + ' Хочу точную оценку квартиры.';
+    + ' Хочу точную оценку квартиры.'+(SRC?' (источник: '+SRC+')':'');
 }
 function alertBox(){
   const b=$('btnWa').querySelector('span'), t=b.textContent;
