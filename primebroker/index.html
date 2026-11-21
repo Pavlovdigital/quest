@@ -190,8 +190,8 @@ body{display:flex;justify-content:center}
     <div class="ttl" id="ttl"><h1>Продай квартиру <span class="gold">дорого</span></h1></div>
     <div class="fxl" id="fxl"></div>
     <div class="say" id="say"></div>
-    <div class="sold" id="sold">ПРОДАНО</div>
-    <div class="flash" id="flash"></div>
+    <div class="sold" id="sold" aria-hidden="true">ПРОДАНО</div>
+    <div class="flash" id="flash" aria-hidden="true"></div>
   </div>
 
   <div class="panel">
@@ -282,7 +282,7 @@ body{display:flex;justify-content:center}
       </div>
       <div class="loss" id="rLoss"></div>
       <div class="agent">
-        <div class="ph" id="agPh">А</div>
+        <div class="ph" id="agPh"><img src="aitan.jpg" alt="Айтан" onerror="this.parentNode.textContent='А'"></div>
         <div><b>Айтан, риэлтор PrimeBroker Estate</b><span>Покажет, за сколько реально продавались похожие квартиры в вашем доме и районе.</span></div>
       </div>
       <div class="bottom" style="margin-top:12px">
@@ -696,7 +696,7 @@ const Scene = (() => {
 const CONFIG = {
   whatsapp: '77053173777',      // номер Айтан для wa.me, без «+»
   agentName: 'Айтан',
-  agentPhoto: '',               // ссылка на фото Айтан (квадратное); пусто — буква «А»
+  agentPhoto: 'aitan.jpg',      // фото Айтан (квадрат 240×240) рядом с игрой; пусто — буква «А»
   city: 'Темиртау',
   gameUrl: location.href.split('#')[0],
   market: { perM2: 217000, src: 'Средняя цена в объявлениях по Темиртау', label: 'медиана по 240 объявлениям на Крыше, ноябрь 2026', cap: 230000 },
