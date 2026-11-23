@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Продай квартиру дорого · PrimeBroker Estate · Темиртау и Караганда</title>
-<meta name="description" content="Игра для тех, кто продаёт квартиру или дом в Темиртау или Караганде: 7 решений от объявления до ключей, ваша цена против рынка и где продавцы теряют деньги.">
+<meta name="description" content="Игра на минуту для тех, кто продаёт квартиру или дом в Темиртау или Караганде: 4 решения и ваша цена против рынка. Или просто оставьте заявку риэлтору.">
 <meta property="og:title" content="Продай квартиру дорого · Темиртау и Караганда">
 <meta property="og:description" content="Проверьте свою квартиру за 3 минуты: ваша цена против рынка и где продавцы теряют деньги. Темиртау и Караганда.">
 <meta name="theme-color" content="#0d0e11">
@@ -29,7 +29,7 @@ body{display:flex;justify-content:center}
 .gold{background:linear-gradient(180deg,var(--gold2),var(--gold) 55%,var(--gold3));-webkit-background-clip:text;background-clip:text;color:transparent}
 
 /* ---- сцена ---- */
-.stage{position:relative;height:290px;height:clamp(250px,46svh,420px);overflow:hidden;background:#0a0c13;transition:height .5s ease}
+.stage{position:relative;height:270px;height:clamp(236px,40svh,420px);overflow:hidden;background:#0a0c13;transition:height .5s ease}
 .app.play .stage{height:230px;height:clamp(205px,33svh,330px)}
 .app.res .stage{height:240px;height:clamp(215px,34svh,330px)}
 #cv{position:absolute;inset:0;width:100%;height:100%;display:block}
@@ -93,6 +93,18 @@ body{display:flex;justify-content:center}
 .btn-gold{background:linear-gradient(180deg,var(--gold2),var(--gold) 60%,var(--gold3));color:#1a1405;box-shadow:0 8px 24px rgba(217,173,85,.22)}
 .btn-gold:disabled{filter:grayscale(1) brightness(.6);cursor:default}
 .btn-wa{background:#25d366;color:#06240f}
+.or{display:flex;align-items:center;gap:10px;color:var(--mut);font-size:12.5px;font-weight:700;margin:14px 0 10px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.inp{width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:13px 12px;font-size:16px;font-weight:600;color:var(--tx);font-family:inherit;outline:none}
+.inp:focus{border-color:var(--gold)}
+.inp.bad{border-color:var(--bad)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.lerr{color:var(--bad);font-size:13px;font-weight:700;margin-top:10px;text-align:center}
+.lform{margin-top:14px;background:linear-gradient(180deg,rgba(217,173,85,.10),rgba(217,173,85,.03));border:1px solid rgba(217,173,85,.4);border-radius:16px;padding:14px 12px}
+.lform h3{font-size:16px;font-weight:900}
+.lform .q{margin-top:10px}
+.foot a{color:var(--gold2)}
+.btn-link{background:none;border:0;color:var(--mut);font-weight:700;font-size:14px;padding:8px;text-decoration:underline;cursor:pointer;font-family:inherit}
 .btn-ghost{background:transparent;color:var(--tx);border:1px solid var(--line);font-weight:700;font-size:15px;padding:13px}
 .bottom{margin-top:16px;display:flex;flex-direction:column;gap:10px}
 .q{margin-top:14px}
@@ -213,8 +225,10 @@ body{display:flex;justify-content:center}
         <button class="card" data-type="4+ комнатная квартира"><span class="n">4+</span><span class="t">комнаты<small>и больше</small></span></button>
         <button class="card wide" data-type="частный дом"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#house"/></svg><span class="t">Частный дом</span></button>
       </div>
-      <p class="foot">Бесплатно · 3 минуты · без регистрации</p>
-      <p class="foot kz" lang="kk">Теміртауда немесе Қарағандыда пәтер сатасыз ба? Тегін ойын, 3 минут</p>
+      <div class="or"><span>или</span></div>
+      <button class="btn btn-ghost" id="btnLeadStart" type="button">Просто оставить заявку риэлтору</button>
+      <p class="foot">Игра: бесплатно · 1 минута · без регистрации</p>
+      <p class="foot kz" lang="kk">Теміртауда немесе Қарағандыда пәтер сатасыз ба? Тегін ойын, 1 минут. Немесе өтінім қалдырыңыз</p>
     </section>
 
     <!-- 2. площадь, цена, состояние -->
@@ -246,34 +260,40 @@ body{display:flex;justify-content:center}
       <div class="bottom"><button class="btn btn-gold" id="btnNext" hidden>Дальше</button></div>
     </section>
 
-    <!-- 3а. вопрос по ходу игры -->
-    <section class="screen" id="sGoal">
-      <div class="qh">Кстати, зачем продаёте?<small>От этого зависит стратегия продажи</small></div>
-      <div class="opts one" data-k="goal" id="goalOpts">
-        <button class="opt" data-v="buy">Чтобы купить другое жильё</button>
-        <button class="opt" data-v="move">Переезжаю в другой город</button>
-        <button class="opt" data-v="money">Нужны деньги</button>
-      </div>
+    <!-- заявка без игры -->
+    <section class="screen" id="sLead">
+      <div class="qh">Заявка риэлтору<small>Айтан перезвонит и бесплатно проконсультирует</small><small lang="kk">Айтан хабарласып, тегін кеңес береді</small></div>
+      <form id="leadForm" novalidate autocomplete="on">
+        <div class="q"><label class="t">Что нужно?</label>
+          <div class="opts" id="lInterest">
+            <button type="button" class="opt" data-v="Продать">Продать</button>
+            <button type="button" class="opt" data-v="Купить">Купить</button>
+            <button type="button" class="opt" data-v="Купить и продать">И то и другое</button>
+          </div></div>
+        <div class="q"><label class="t" for="lName">Имя</label><input class="inp" id="lName" name="name" autocomplete="given-name" maxlength="60" placeholder="Как к вам обращаться"></div>
+        <div class="q"><label class="t" for="lPhone">Телефон</label><input class="inp" id="lPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="+7 7__ ___ __ __"></div>
+        <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="lerr" id="lErr" hidden></p>
+        <div class="bottom"><button class="btn btn-gold" id="btnLeadSend" type="submit">Отправить заявку</button></div>
+        <p class="foot">Нажимая «Отправить», вы соглашаетесь с <a href="privacy.html" target="_blank" rel="noopener">политикой конфиденциальности</a></p>
+        <div class="bottom" style="margin-top:6px"><button class="btn-link" id="lBack" type="button">Лучше пройти игру</button></div>
+      </form>
     </section>
 
-    <!-- 4. последний шаг перед результатом -->
-    <section class="screen" id="sFinal">
-      <div class="qh">Последний шаг<small>Чтобы разбор был точнее</small></div>
-      <div class="q"><label class="t">Что с документами? <span style="color:var(--mut);font-weight:500">Можно несколько</span></label>
-        <div class="opts one" data-k="docs" data-multi="1">
-          <button class="opt" data-v="ok">Всё в порядке</button>
-          <button class="opt" data-v="kids">Есть доли детей</button>
-          <button class="opt" data-v="inherit">Получена по наследству</button>
-          <button class="opt" data-v="replan">Перепланировка не узаконена</button>
-          <button class="opt" data-v="mortgage">В ипотеке или в залоге</button>
-        </div></div>
-      <div class="q"><label class="t">Когда нужно продать</label>
-        <div class="opts" data-k="term">
-          <button class="opt" data-v="срочно, до месяца">До месяца</button>
-          <button class="opt" data-v="за 1–3 месяца">1–3 месяца</button>
-          <button class="opt" data-v="не спешу">Не спешу</button>
-        </div></div>
-      <div class="bottom"><button class="btn btn-gold" id="btnRes" disabled>Смотреть результат</button></div>
+    <!-- спасибо -->
+    <section class="screen" id="sThanks">
+      <div class="res-top">
+        <h2>Спасибо! Заявка отправлена</h2>
+        <p class="score">Айтан перезвонит вам в ближайшее время.</p>
+        <p class="score" lang="kk">Рахмет! Айтан жақын арада хабарласады.</p>
+      </div>
+      <div class="agent">
+        <div class="ph"><img src="aitan.jpg" alt="Айтан" onerror="this.parentNode.textContent='А'"></div>
+        <div><b>Айтан, риэлтор PrimeBroker Estate</b><span>Темиртау и Караганда. Подбор, продажа и сопровождение сделки.</span></div>
+      </div>
+      <div class="bottom">
+        <button class="btn btn-ghost" id="btnThanksGame" type="button">Пока жду звонка, пройти игру</button>
+      </div>
     </section>
 
     <!-- 5. результат -->
@@ -293,10 +313,20 @@ body{display:flex;justify-content:center}
         <div class="ph" id="agPh"><img src="aitan.jpg" alt="Айтан" onerror="this.parentNode.textContent='А'"></div>
         <div><b>Айтан, риэлтор PrimeBroker Estate</b><span>Покажет, за сколько реально продавались похожие квартиры в вашем доме и районе.</span></div>
       </div>
+      <form class="lform" id="resForm" novalidate autocomplete="on">
+        <h3>Узнать точную цену вашей квартиры</h3>
+        <p class="hint">Оставьте номер, и Айтан перезвонит.</p><p class="hint" lang="kk">Нақты бағаны білу үшін нөміріңізді қалдырыңыз.</p>
+        <div class="q"><input class="inp" id="rName" name="name" autocomplete="given-name" maxlength="60" placeholder="Имя"></div>
+        <div class="q"><input class="inp" id="rPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="Телефон +7 7__ ___ __ __"></div>
+        <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="lerr" id="rErr" hidden></p>
+        <div class="bottom" style="margin-top:12px"><button class="btn btn-gold" id="btnResSend" type="submit">Получить оценку</button></div>
+        <p class="foot">Нажимая кнопку, вы соглашаетесь с <a href="privacy.html" target="_blank" rel="noopener">политикой конфиденциальности</a></p>
+      </form>
       <div class="bottom" style="margin-top:12px">
-        <a class="btn btn-wa" id="btnWa" target="_blank" rel="noopener">
+        <a class="btn btn-ghost" id="btnWa" target="_blank" rel="noopener">
           <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 0 0-7.3 12.9L3.5 20.5l4.2-1.1A8.5 8.5 0 1 0 12 3.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 8.6c.5 2.6 2.2 4.6 4.9 5.6l1.3-1.3 1.9.9c-.3 1.3-1.2 2-2.4 2-3.7-.4-6.9-3.6-7.3-7.3 0-1.2.7-2.1 2-2.4l.9 1.9z" fill="currentColor"/></svg>
-          <span>Получить точную оценку у Айтан</span>
+          <span>Или написать Айтан в WhatsApp</span>
         </a>
         <p class="kz" lang="kk">Пәтеріңіздің нақты бағасын білу үшін WhatsApp-қа жазыңыз</p>
       </div>
@@ -752,47 +782,22 @@ const SITUATIONS = [
       { a: 'Без фото. Пусть звонят и приезжают', q: 'bad', p: -5, d: 35, w: 'Объявление без фото',
         h: 'Объявление без фото почти не смотрят', e: 'Большинство покупателей пролистывает такие объявления. Остаются перекупщики, которые ищут дешёвое.' }
     ], pb: 'PrimeBroker делает видеообзоры квартир для TikTok и Instagram.' },
-  { id: 'where', t: 'Где искать покупателя?', s: 'Чем больше подходящих покупателей видят квартиру, тем меньше вы уступаете.',
-    c: [
-      { a: 'Только объявление на Крыше', q: 'mid', p: 0, d: 15, w: 'Один канал продаж',
-        h: 'Работает, но медленно', e: 'Вы конкурируете с десятками похожих объявлений. Покупатель найдётся, но позже.' },
-      { a: 'Крыша + видео в TikTok и Instagram + база покупателей агента', q: 'good', p: 1, d: -15,
-        h: 'Верно', e: 'Несколько каналов сразу дают поток показов. Когда покупателей несколько, торг идёт в вашу пользу.' },
-      { a: 'Расскажу знакомым, вдруг кто купит', q: 'bad', p: -2, d: 40, w: 'Продажа через знакомых',
-        h: 'Долго и с торгом', e: 'Знакомые редко покупают, а если покупают, то просят «по-свойски» скидку.' }
-    ], pb: 'У Айтан есть база покупателей, в том числе с уже одобренной ипотекой.' },
   { id: 'call', t: 'Звонит покупатель: «Можно сегодня посмотреть?»', s: '',
     c: [
       { a: 'Конечно, приезжайте', q: 'bad', p: -1, d: 10, w: 'Показы без отбора',
         h: 'Много пустых показов', e: 'Половина таких показов — «просто посмотреть». Вы устаёте, а частые показы без результата начинают давить на цену.' },
-      { a: 'Сначала уточню бюджет, одобрена ли ипотека и когда готовы покупать', q: 'good', p: 0, d: -10,
+      { a: 'Сначала уточню бюджет и когда готовы покупать', q: 'good', p: 0, d: -10,
         h: 'Верно', e: 'Короткий отбор по телефону экономит недели. На показ приходят те, кто реально может купить.' }
-    ], pb: 'Айтан отсеивает «туристов» и проверяет одобрение ипотеки до показа.' },
+    ], pb: 'Айтан отсеивает «туристов» и проверяет готовность покупателя до показа.' },
   { id: 'haggle', t: 'На показе сразу предлагают на 7% дешевле', s: '«Беру сегодня, но вот за такую цену».',
     c: [
       { a: 'Соглашусь, вдруг больше никто не придёт', q: 'bad', p: -7, d: -10, w: 'Уступили первому же предложению',
         h: 'Страх потерять покупателя', e: 'Первое предложение почти всегда проверочное. Согласившись сразу, вы отдали всю скидку, которую просили.' },
-      { a: 'Резко откажу', q: 'bad', p: 0, d: 20, w: 'Отказ без встречного предложения',
+      { a: 'Резко откажу', q: 'bad', p: -3, d: 20, w: 'Отказ без встречного предложения',
         h: 'Потеряли покупателя', e: 'Человек был готов покупать. Без встречного предложения он просто уходит смотреть другие варианты.' },
       { a: 'Поблагодарю и предложу встречную цену с аргументами', q: 'good', p: -2, d: -5,
         h: 'Верно', e: 'Аргументы (ремонт, готовые документы, быстрый выход на сделку) удерживают цену. Обычно сходятся гораздо ближе к вашей сумме.' }
-    ], pb: 'Торг с покупателем ведёт агент, и вам не нужно отвечать на эмоциях.' },
-  { id: 'deposit', t: 'Покупатель готов и хочет внести задаток', s: 'Покупает в ипотеку, банк ещё рассматривает заявку.',
-    c: [
-      { a: 'Возьму наличными под расписку, договор потом', q: 'bad', p: -3, d: 25, w: 'Задаток без нормального оформления',
-        h: 'Риск сорвать сделку', e: 'Без письменного соглашения о задатке спорно, задаток это или аванс. Если банк откажет покупателю, вы теряете время и покупателей, которых отпустили.' },
-      { a: 'Оформлю соглашение о задатке, проверю одобрение ипотеки и назначу дату сделки', q: 'good', p: 0, d: -5,
-        h: 'Верно', e: 'Понятные условия и сроки защищают обе стороны и не дают сделке развалиться в последний момент.' }
-    ], pb: 'Айтан ведёт ипотеку под ключ и знает, как банк проверяет квартиру и покупателя.' },
-  { id: 'alt', only: 'buy', t: 'Вы продаёте, чтобы купить другое жильё', s: 'Как не остаться без жилья и не переплатить?',
-    c: [
-      { a: 'Сначала продам, потом поищу новую. Поживём на съёме', q: 'bad', p: -3, d: 30, w: 'Продажа без плана на покупку',
-        h: 'Двойные расходы', e: 'Аренда, два переезда, и пока вы ищете, цены могут вырасти. Часто деньги «съедаются» за несколько месяцев.' },
-      { a: 'Буду искать новую параллельно и синхронизирую сделки', q: 'good', p: 0, d: -10,
-        h: 'Хорошо', e: 'Альтернативная сделка требует опыта, но экономит деньги и время.' },
-      { a: 'Узнаю про ипотеку под залог текущей квартиры вместо первоначального взноса', q: 'good', p: 0, d: -20, best: true,
-        h: 'Сильный ход', e: 'Имеющуюся недвижимость в черте города можно заложить вместо первоначального взноса. Тогда вы покупаете новую квартиру, не продавая старую в спешке.' }
-    ], pb: 'Это одно из направлений Айтан. Она проверит, подходит ли такая схема именно вам.' }
+    ], pb: 'Торг с покупателем ведёт агент, и вам не нужно отвечать на эмоциях.' }
 ];
 /* что всплывает над домом после ответа */
 const SCENE_FX = {
@@ -826,7 +831,7 @@ const app = $('app');
 
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
-  app.classList.toggle('play', ['sPrice', 'sGame', 'sGoal', 'sFinal'].includes(id));
+  app.classList.toggle('play', ['sPrice', 'sGame', 'sLead', 'sThanks'].includes(id));
   app.classList.toggle('res', id === 'sRes');
   $('ttl').classList.toggle('off', id !== 'sStart');
   if (id !== 'sStart') window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -906,13 +911,12 @@ document.querySelectorAll('.opts').forEach(g => {
       g.querySelectorAll('.opt').forEach(o => o.classList.toggle('sel', S.docs.includes(o.dataset.v)));
     } else { S[k] = v; g.querySelectorAll('.opt').forEach(o => o.classList.toggle('sel', o === b)); }
     if (k === 'goal') goalChosen();
-    $('btnRes').disabled = !(S.docs.length && S.term);
   });
 });
 
 /* ===== 3. ИГРА ===== */
 $('btnGame').onclick = () => {
-  S.list = SITUATIONS.filter(x => !x.only); S.i = 0; S.pct = 0; S.days = CONFIG.baseDays; S.answers = []; S.stars = 0; S.asked = false; S.goal = null;
+  S.list = SITUATIONS.slice(); S.i = 0; S.pct = 0; S.days = CONFIG.baseDays; S.answers = []; S.stars = 0; S.asked = false; S.goal = null;
   const c = S.cond || 'жилое состояние';
   S.views = c === 'свежий ремонт' ? 140 : c === 'жилое состояние' ? 110 : 80; S.calls = Math.round(S.views / 25); S.buyers = 1;
   ['stViews', 'stCalls', 'stBuyers'].forEach(id => $(id).dataset.v = 0);
@@ -960,7 +964,7 @@ function choose(ci) {
   const dm = S.price * c.p / 100;
   const tags = (c.p ? '<span class="delta ' + (c.p > 0 ? 'g' : 'b') + '">' + (c.p > 0 ? '+' : '−') + fmtT(Math.abs(dm * 1e6)) + '</span>' : '')
     + (c.d ? '<span class="delta ' + (c.d < 0 ? 'g' : 'b') + '">' + (c.d < 0 ? '−' : '+') + Math.abs(c.d) + ' дней</span>' : '');
-  $('gBubble').innerHTML = '<div class="h ' + (c.q === 'good' ? 'good' : c.q === 'mid' ? 'mid' : 'bad') + '">' + c.h + '</div>' + c.e + '<div>' + tags + '</div><div class="pb">' + x.pb + '</div>';
+  $('gBubble').innerHTML = '<div class="h ' + (c.q === 'good' ? 'good' : c.q === 'mid' ? 'mid' : 'bad') + '">' + c.h + '</div><div>' + tags + '</div>';
   $('gFb').classList.add('on');
   updHud({ p: c.p, d: c.d });
   // сцена
@@ -978,15 +982,16 @@ function choose(ci) {
     floatText(btn, c.p ? '−' + fmtT(Math.abs(dm * 1e6)) : '+' + c.d + ' дней', 'var(--bad)'); }
   updStats();
   $('gBar').style.width = ((S.i + 1) / S.list.length * 100) + '%';
-  const nb = $('btnNext'); nb.hidden = false; nb.textContent = S.i === S.list.length - 1 ? 'Дальше' : 'Следующий шаг';
-  setTimeout(() => nb.scrollIntoView({ behavior: 'smooth', block: 'end' }), 150);
+  clearTimeout(S.adv); S.adv = setTimeout(nextSit, reduce ? 600 : 1900);
 }
-$('btnNext').onclick = () => {
+function nextSit() {
+  clearTimeout(S.adv);
+  if (!$('sGame').classList.contains('on')) return;
   S.i++;
-  if (S.i === 4 && !S.asked) { S.asked = true; Scene.clearChips(); Scene.say('Кстати, а зачем продаёте?'); show('sGoal'); return; }
   if (S.i < S.list.length) { renderSit(); return; }
-  Scene.clearChips(); Scene.say('Последний шаг — и покажу результат', 2500); show('sFinal');
-};
+  Scene.clearChips(); result();
+}
+$('btnNext').onclick = nextSit;
 function goalChosen() {
   track('seller_game_goal', { goal: S.goal });
   const alt = SITUATIONS.find(x => x.id === 'alt');
@@ -995,19 +1000,80 @@ function goalChosen() {
   setTimeout(() => { show('sGame'); renderSit(); }, reduce ? 0 : 250);
 }
 
+
+/* ===== ЗАЯВКА ===== */
+const LEADS_URL = 'https://script.google.com/macros/s/AKfycbz7eQ72F7sJCpyLMC4NT_gEWA6P9w7ufjIcRJj01KrktXLHqbtSVYwizDS-hqXcA0z_/exec';
+const UTM = (QS.get('utm_source') || QS.get('utm_campaign') || '').replace(/[^a-z0-9_-]/gi, '').slice(0, 30);
+let leadFrom = 'start';
+function phoneDigits(v) { let d = String(v || '').replace(/\D/g, ''); if (d.length === 11 && /^[78]/.test(d)) d = d.slice(1); return d; }
+function phoneOk(v) { const d = phoneDigits(v); return d.length === 10 && d[0] === '7'; }
+function maskPhone(el) {
+  el.addEventListener('focus', () => { if (!el.value) el.value = '+7 '; });
+  el.addEventListener('input', () => {
+    const d = phoneDigits(el.value.startsWith('+7') ? el.value.slice(2) : el.value).slice(0, 10);
+    const p = [d.slice(0, 3), d.slice(3, 6), d.slice(6, 8), d.slice(8, 10)].filter(Boolean);
+    el.value = '+7 ' + p.join(' ');
+    el.classList.remove('bad');
+  });
+}
+async function sendLead(d) {
+  const data = Object.assign({ src: SRC || UTM || 'direct', page: location.pathname }, d);
+  const body = new URLSearchParams(data);
+  try { await fetch(LEADS_URL, { method: 'POST', mode: 'no-cors', body, keepalive: true }); return true; }
+  catch (e) { try { return navigator.sendBeacon(LEADS_URL, body); } catch (e2) { return false; } }
+}
+function leadFail(errEl) {
+  errEl.hidden = false;
+  errEl.innerHTML = 'Не получилось отправить. Позвоните или напишите Айтан: <a href="https://wa.me/' + CONFIG.whatsapp + '" target="_blank" rel="noopener" style="color:var(--gold2)">WhatsApp +7 705 317 37 77</a>';
+}
+function openLead(from) {
+  leadFrom = from; track('seller_lead_open', { from });
+  Scene.say(''); show('sLead');
+}
+$('btnLeadStart').onclick = () => { SND.tap(); openLead('start'); };
+$('lBack').onclick = () => { show('sStart'); Scene.say('Какую квартиру<br>продаём?'); };
+$('btnThanksGame').onclick = () => { show('sStart'); Scene.say('Какую квартиру<br>продаём?'); };
+$('lInterest').addEventListener('click', e => {
+  const b = e.target.closest('.opt'); if (!b) return; SND.tap();
+  $('lInterest').querySelectorAll('.opt').forEach(o => o.classList.toggle('sel', o === b)); S.interest = b.dataset.v;
+});
+maskPhone($('lPhone')); maskPhone($('rPhone'));
+$('leadForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, err = $('lErr'), ph = $('lPhone');
+  err.hidden = true;
+  if (!phoneOk(ph.value)) { ph.classList.add('bad'); err.hidden = false; err.textContent = 'Проверьте номер телефона: +7 7XX XXX XX XX'; ph.focus(); return; }
+  const btn = $('btnLeadSend'); btn.disabled = true; btn.textContent = 'Отправляем…';
+  const ok = await sendLead({ name: $('lName').value.trim(), phone: '+7' + phoneDigits(ph.value), website: f.website.value,
+    interest: (S.interest || 'Не указали') + ' · ' + C().name, form: 'Сайт: заявка', comment: 'Без игры' });
+  btn.disabled = false; btn.textContent = 'Отправить заявку';
+  if (!ok) { leadFail(err); return; }
+  track('seller_lead_submit', { from: 'start', interest: S.interest || '', city: S.city });
+  f.reset(); show('sThanks');
+});
+$('resForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, err = $('rErr'), ph = $('rPhone');
+  err.hidden = true;
+  if (!phoneOk(ph.value)) { ph.classList.add('bad'); err.hidden = false; err.textContent = 'Проверьте номер телефона: +7 7XX XXX XX XX'; ph.focus(); return; }
+  const btn = $('btnResSend'); btn.disabled = true; btn.textContent = 'Отправляем…';
+  const good = S.answers.filter(a => a.c.q === 'good').length;
+  const ok = await sendLead({ name: $('rName').value.trim(), phone: '+7' + phoneDigits(ph.value), website: f.website.value,
+    interest: 'Продать · ' + S.type + ' · ' + C().name, form: 'Сайт: игра',
+    comment: S.area + ' м², хочет ' + fmtM(S.price) + (S.cond ? ', ' + S.cond : '') + '. Верных решений ' + good + ' из ' + S.answers.length });
+  btn.disabled = false; btn.textContent = 'Получить оценку';
+  if (!ok) { leadFail(err); return; }
+  track('seller_lead_submit', { from: 'result', type: S.type, city: S.city });
+  f.reset(); show('sThanks');
+});
+
 /* ===== 4. РЕЗУЛЬТАТ ===== */
-$('btnRes').onclick = () => { track('seller_game_profile', { docs: S.docs.join(','), term: S.term, goal: S.goal }); result(); };
 function best() {
   let p = 0, d = CONFIG.baseDays;
   S.list.forEach(x => { const g = x.c.filter(c => c.q === 'good').sort((a, b) => (b.best ? 1 : 0) - (a.best ? 1 : 0) || b.p - a.p || a.d - b.d)[0]; p += g.p; d += g.d; });
   return { p, d };
 }
-const DOCS = {
-  kids: 'Доли детей: для продажи нужно разрешение органов опеки. Его стоит получить заранее, иначе сделка встанет на этапе оформления.',
-  inherit: 'Наследство: проверьте, что право собственности уже зарегистрировано на вас и все наследники согласны. Покупатели и банки внимательно смотрят такие квартиры.',
-  replan: 'Неузаконенная перепланировка: банк может отказать покупателю в ипотеке. Её лучше узаконить или заранее учесть в цене.',
-  mortgage: 'Квартира в залоге: продать можно, но нужна понятная схема погашения долга через банк. Без неё многие покупатели отказываются.'
-};
+const DOCS = {};
 function result() {
   const good = S.answers.filter(a => a.c.q === 'good').length, n = S.answers.length;
   const B = best(), mine = money(), bestM = S.price * (1 + B.p / 100), loss = (bestM - mine) * 1e6, lossD = Math.max(MIN_D, S.days) - Math.max(MIN_D, B.d);
@@ -1036,12 +1102,12 @@ function result() {
   const wrong = S.answers.filter(a => a.c.q !== 'good');
   $('rWrong').innerHTML = wrong.length
     ? '<h3>Где вы теряли</h3><ul>' + wrong.map(a => '<li>' + a.c.w + (a.c.p < 0 ? ' — ' + fmtT(Math.abs(S.price * a.c.p / 100 * 1e6)) : '') + (a.c.d > 0 ? ', +' + a.c.d + ' дней' : '') + '</li>').join('') + '</ul>'
-    : '<h3>Ваш план</h3><p>Цена по рынку, сильная подача, несколько каналов, отбор покупателей и аккуратное оформление. Осталось точно определить цену.</p>';
+    : '<h3>Ваш план</h3><p>Цена по рынку, сильная подача, отбор покупателей и спокойный торг. Осталось точно определить цену.</p>';
   const docs = S.docs.filter(d => DOCS[d]);
   $('rDocs').hidden = !docs.length;
   $('rDocs').innerHTML = '<h3>Проверьте до выхода на рынок</h3><ul>' + docs.map(d => '<li>' + DOCS[d] + '</li>').join('') + '</ul>';
   $('rAlt').hidden = S.goal !== 'buy';
-  $('rAlt').innerHTML = '<h3>Если вы покупаете другое жильё</h3><p>Можно не продавать сначала, а заложить текущую квартиру вместо первоначального взноса по ипотеке. Тогда у вас останется два объекта, и продавать старую можно без спешки и скидок. ' + CONFIG.agentName + ' посчитает, подходит ли вам такая схема.</p>';
+  $('rAlt').innerHTML = '';
   if (CONFIG.agentPhoto) $('agPh').innerHTML = '<img src="' + CONFIG.agentPhoto + '" alt="' + CONFIG.agentName + '">';
   const wa = $('btnWa');
   wa.href = CONFIG.whatsapp ? 'https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(waText(good, n)) : '#';
@@ -1060,7 +1126,7 @@ function waText(good, n) {
     + ' Хочу точную оценку.' + (SRC ? ' (источник: ' + SRC + ')' : '');
 }
 $('btnShare').onclick = async () => {
-  const text = 'Проверь, за сколько продашь квартиру в Темиртау или Караганде и где теряют деньги: игра на 3 минуты';
+  const text = 'Проверь, за сколько продашь квартиру в Темиртау или Караганде и где теряют деньги: игра на минуту';
   track('seller_game_share');
   try { if (navigator.share) { await navigator.share({ title: 'Продай квартиру дорого', text, url: CONFIG.gameUrl }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
   try { await navigator.clipboard.writeText(text + ' ' + CONFIG.gameUrl); $('btnShare').textContent = 'Ссылка скопирована'; }
@@ -1070,7 +1136,7 @@ $('btnShare').onclick = async () => {
 $('btnAgain').onclick = () => {
   track('seller_game_again');
   Object.assign(S, { type: null, cond: null, term: null, docs: [], goal: null, asked: false });
-  document.querySelectorAll('.card,.opt').forEach(o => o.classList.remove('sel')); $('btnRes').disabled = true;
+  document.querySelectorAll('.card,.opt').forEach(o => o.classList.remove('sel'));
   Scene.sold(false); Scene.home(); Scene.say('Ещё раз? Какую квартиру<br>продаём?');
   show('sStart'); window.scrollTo({ top: 0 });
 };
